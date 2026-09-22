@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DigitalWallet.Domain.Enums;
 
 namespace DigitalWallet.Domain.Entities
 {
-    public class Account
+    public class Wallet
     {
         public int Id { get; set; }
 
@@ -16,7 +17,9 @@ namespace DigitalWallet.Domain.Entities
 
         public decimal Balance { get; set; }
 
-        public string Currency { get; set; }
+        public Currency currency { get; set; }
+
+        public StatusType status { get; set; }
 
         public DateTime Timestamp { get; set; }
     }
