@@ -6,9 +6,6 @@ namespace DigitalWallet.Domain.Interfaces
 {
     internal interface IEntity
     {
-        
         public DateTime CreatedDate { get; set; }
-
-        public DateTime UpdatedDate { get; set; }
     }
 }

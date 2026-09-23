@@ -4,11 +4,9 @@ using System.Text;
 
 namespace DigitalWallet.Domain.Enums
 {
-    public enum ActionType
+    public enum KYCLevel
     {
-        Transfer,
-        Deposit,
-        Withdraw
-
+        Standart,
+        Verified
     }
 }

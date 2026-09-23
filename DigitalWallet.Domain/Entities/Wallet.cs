@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DigitalWallet.Domain.Enums;
+﻿using DigitalWallet.Domain.Enums;
+//kullanıcı cüzdanı
 
 namespace DigitalWallet.Domain.Entities
 {
@@ -13,14 +11,17 @@ namespace DigitalWallet.Domain.Entities
 
         public User User { get; set; }
 
+        public ICollection<Payment> Payments { get; set; }
+
+        public ICollection<Transaction> Transactions { get; set; } 
+
         public string IBAN { get; set; }
 
         public decimal Balance { get; set; }
 
-        public Currency currency { get; set; }
+        public Currency Currency { get; set; }
 
-        public StatusType status { get; set; }
+        public DateTime RowVersion { get; set; }
 
-        public DateTime Timestamp { get; set; }
     }
 }

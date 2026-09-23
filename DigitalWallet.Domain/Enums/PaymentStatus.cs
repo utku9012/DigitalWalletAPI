@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace DigitalWallet.Domain.Enums
-{
-    public enum StatusType
+{   public enum PaymentStatus
     {
         Pending,
+        Processing,
         Completed,
-        Failed
+        Failed,
+        Cancelled,
+        Refunded
     }
 }

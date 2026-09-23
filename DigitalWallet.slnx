@@ -1,1 +1,12 @@
-<Solution />
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="DigitalWallet.Application/DigitalWallet.Application.csproj" />
+    <Project Path="DigitalWallet.Domain/DigitalWallet.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="DigitalWallet.Infrastructure/DigitalWallet.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="DigitalWallet.API/DigitalWallet.API.csproj" />
+  </Folder>
+</Solution>

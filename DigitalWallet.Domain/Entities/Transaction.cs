@@ -1,22 +1,26 @@
 ﻿using DigitalWallet.Domain.Enums;
 using DigitalWallet.Domain.Interfaces;
-using DigitalWallet.Domain.ValueObjects;
 
+//bakiye harekelerinin tutulduğu append only tablo 
 namespace DigitalWallet.Domain.Entities
 {
-    public class Transactions : IEntity
+    public class Transaction : IEntity
     {
         public int Id { get; set; }
 
         public int WalletId { get; set; }
 
-        public Wallet Wallet { get; set; }
+        public Wallet Wallet { get; set; } 
 
-        public Money Money { get; set; } 
+        public int? PaymentId { get; set; } // her transaction payment içermek zorunda değil.
 
-        public ActionType ActionType { get; set; }
+        public Payment? Payment { get; set; }
 
-        public StatusType StatusType { get; set; }
+        public decimal Amount { get; set; }
+
+        public Currency Currency { get; set; }
+
+        public TransactionType TransactionType { get; set; }
 
         public DateTime TransactionDate { get; set; }
 
@@ -26,6 +30,5 @@ namespace DigitalWallet.Domain.Entities
 
         public DateTime CreatedDate { get; set; }
 
-        public DateTime UpdatedDate { get; set; }
     }
 }
