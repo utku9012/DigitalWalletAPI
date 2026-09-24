@@ -1,13 +1,14 @@
 ﻿using DigitalWallet.Domain.Enums;
+using DigitalWallet.Domain.Interfaces;
 //kullanıcı cüzdanı
 
 namespace DigitalWallet.Domain.Entities
 {
-    public class Wallet
+    public class Wallet : IEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
-        public int UserId { get; set; } //foreign key
+        public Guid UserId { get; set; } //foreign key
 
         public User User { get; set; }
 
@@ -23,5 +24,9 @@ namespace DigitalWallet.Domain.Entities
 
         public DateTime RowVersion { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
+        public WalletStatus WalletStatus { get; set; }
+        
     }
 }

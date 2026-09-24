@@ -7,9 +7,9 @@ namespace DigitalWallet.Domain.Entities
 {
     public class Payment : IEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
-        public int WalletId { get; set; }
+        public Guid WalletId { get; set; }
 
         public Wallet Wallet { get; set; }
 

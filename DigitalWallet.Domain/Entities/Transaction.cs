@@ -6,13 +6,17 @@ namespace DigitalWallet.Domain.Entities
 {
     public class Transaction : IEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
-        public int WalletId { get; set; }
+        public Guid WalletId { get; set; }
 
-        public Wallet Wallet { get; set; } 
+        public Wallet Wallet { get; set; }
 
-        public int? PaymentId { get; set; } // her transaction payment içermek zorunda değil.
+        public Guid? SenderWalletId { get; set; }
+
+        public Guid? ReceiverWalletId { get; set; }
+
+        public Guid? PaymentId { get; set; } // her transaction payment içermek zorunda değil.
 
         public Payment? Payment { get; set; }
 
@@ -24,11 +28,17 @@ namespace DigitalWallet.Domain.Entities
 
         public DateTime TransactionDate { get; set; }
 
-        public int ReferenceId { get; set; } // unique olmalı
+        public Guid ReferenceId { get; set; } // unique olmalı
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public DateTime CreatedDate { get; set; }
+
+        // Navigation Property, cüzdanın tüm özelliklerine (Bakiye, Kullanıcı vs.) doğrudan erişebilmesi için kullanılır.
+        // EF Core varsayılan olarak Foreign Key ile Navigation Property isimlerini birbiriyle eşleştirir. Eğer sütun adın SenderWalletId ise, EF Core otomatik olarak Id'yi kaldırır ve SenderWallet ile de navigation propertydeki SenderWallet ismi eşleşir.
+        // Eğer NP ismi farklı olsaydı "X" için SenderWalletId sütununu kullan diyecek kodu yazmamız gerekirdi.
+        public virtual Wallet? SenderWallet { get; set; }
+        public virtual Wallet? ReceiverWallet { get; set; }
 
     }
 }

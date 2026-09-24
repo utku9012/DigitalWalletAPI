@@ -6,6 +6,7 @@ namespace DigitalWallet.Domain.Interfaces
 {
     internal interface IEntity
     {
+        public Guid Id { get; set; }
         public DateTime CreatedDate { get; set; }
     }
 }
