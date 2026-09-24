@@ -166,7 +166,7 @@ namespace DigitalWallet.Infrastructure
                 .WithMany(p => p.Transactions)
                 .HasForeignKey(t => t.PaymentId)
                 .IsRequired(false)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict); // silinmesini engelliyor.
             #endregion
         }
     }
