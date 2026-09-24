@@ -75,6 +75,10 @@ namespace DigitalWallet.Infrastructure
                 .HasMaxLength(26);
 
             modelBuilder.Entity<Wallet>()
+                .Property(u => u.Balance)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Wallet>()
                 .HasMany(w => w.Payments)
                 .WithOne(p => p.Wallet)
                 .HasForeignKey(p => p.WalletId)
@@ -98,7 +102,8 @@ namespace DigitalWallet.Infrastructure
                .IsRequired();
 
             modelBuilder.Entity<Payment>()
-               .Property(u => u.Amount);
+               .Property(u => u.Amount)
+               .HasPrecision(18, 2);
 
             modelBuilder.Entity<Payment>()
                .Property(u => u.Currency)
@@ -137,7 +142,8 @@ namespace DigitalWallet.Infrastructure
                 .Property(t => t.PaymentId);
 
             modelBuilder.Entity<Transaction>()
-                .Property(t => t.Amount);
+                .Property(t => t.Amount)
+                .HasPrecision(18, 2);
 
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.Currency)
