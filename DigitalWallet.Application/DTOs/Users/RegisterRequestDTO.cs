@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DigitalWallet.Application.DTOs
+namespace DigitalWallet.Application.DTOs.Users
 {
-    public class CreateUserDTO
+    public class RegisterRequestDTO
     {
         public string IdentityNumber { get; set; }
 

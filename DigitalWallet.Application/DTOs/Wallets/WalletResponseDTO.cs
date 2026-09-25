@@ -1,9 +1,8 @@
 ﻿using DigitalWallet.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace DigitalWallet.Application.DTOs
+
+// Cüzdan Oluştur, Cüzdanları Listele, Seçili Cüzdanı Listeleme, Cüzdan aktif/pasif endpointlerine reponse   
+namespace DigitalWallet.Application.DTOs.Wallets
 {
     public class WalletResponseDTO
     {

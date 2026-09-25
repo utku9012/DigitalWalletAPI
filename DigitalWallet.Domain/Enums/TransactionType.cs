@@ -8,8 +8,6 @@ namespace DigitalWallet.Domain.Enums
     {
         Deposit,
         Withdrawal,
-        Payment,
-        Refund,
-        Fee
+        Payment
     }
 }

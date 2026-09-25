@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DigitalWallet.Application.DTOs
+﻿//para transferi için gerekli olan minimal 3 property
+namespace DigitalWallet.Application.DTOs.Transactions
 {
     public class TransferRequestDTO
     {
@@ -11,6 +8,8 @@ namespace DigitalWallet.Application.DTOs
         public Guid ReceiverWalletId { get; set; }
 
         public decimal Amount { get; set; }
+
+        public string? Description { get; set; }
 
     }
 }

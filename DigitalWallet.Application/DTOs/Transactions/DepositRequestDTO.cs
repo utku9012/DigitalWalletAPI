@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 //kullanıcının hesabına para yüklemesi için gerekli olan minimal 2 property
-namespace DigitalWallet.Application.DTOs
+namespace DigitalWallet.Application.DTOs.Transactions
 {
     public class DepositRequestDTO
     {

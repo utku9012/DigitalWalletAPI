@@ -21,7 +21,7 @@ namespace DigitalWallet.Domain.Entities
 
         public ICollection<Transaction> Transactions { get; set; }
 
-        public int ReferenceId { get; set; }
+        public Guid ReferenceId { get; set; }
 
         public DateTime CreatedDate { get; set; }
     }
