@@ -19,7 +19,7 @@ namespace DigitalWallet.Domain.ValueObjects
             Value = value;
         }
 
-        // public olursa dışarıdan new Email yapılabilir, koymazsak da DB'den gelen querylerde EF patlar.
+        // private constructor kullanılmayacak olsa bile public olursa dışarıdan new Email yapılabilir, koymazsak da DB'den gelen querylerde EF patlar.
         private Email() { }
 
         public override string ToString() => Value;

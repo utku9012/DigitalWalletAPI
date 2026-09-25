@@ -30,5 +30,6 @@ namespace DigitalWallet.Domain.Entities
 
         public DateTime CreatedDate { get; set; }
 
+        public string PasswordHash { get; set; }
     }
 }
