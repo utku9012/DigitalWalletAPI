@@ -13,10 +13,5 @@ namespace DigitalWallet.Application.Interfaces
         Task<WalletResponseDTO> GetWalletById(Guid Id);
 
         Task<IEnumerable<WalletResponseDTO>> GetUserWalletsAsync(Guid userId);
-
-        Task<bool> DepositAsync(DepositRequestDTO request);
-        Task<bool> WithdrawAsync(WithdrawRequestDTO request);
-        Task<bool> TransferAsync(TransferRequestDTO request);
-
     }
 }

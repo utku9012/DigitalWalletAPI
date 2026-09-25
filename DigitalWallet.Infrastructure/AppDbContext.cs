@@ -1,9 +1,10 @@
-﻿using DigitalWallet.Domain.Entities;
+﻿using DigitalWallet.Application.Interfaces;
+using DigitalWallet.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DigitalWallet.Infrastructure
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : DbContext, IApplicationDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -55,7 +56,7 @@ namespace DigitalWallet.Infrastructure
                 .Property(u => u.KYC)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<User>() // enum mapleme
+            modelBuilder.Entity<User>() 
                 .Property(u => u.IsActive)
                 .HasConversion<string>(); // olmazsa BoolToZeroOneConverter kullan
             #endregion

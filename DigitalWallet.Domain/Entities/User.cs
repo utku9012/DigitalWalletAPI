@@ -1,5 +1,6 @@
 ﻿using DigitalWallet.Domain.Enums;
 using DigitalWallet.Domain.Interfaces;
+using DigitalWallet.Domain.ValueObjects;
 
 //kullanıcı 
 namespace DigitalWallet.Domain.Entities
@@ -17,7 +18,7 @@ namespace DigitalWallet.Domain.Entities
 
         public string LastName { get; set; }
 
-        public string Email { get; set; }
+        public Email Email { get; set; }
 
         public string PhoneNumber { get; set; }
 
@@ -25,7 +26,7 @@ namespace DigitalWallet.Domain.Entities
 
         public KYCLevel KYC { get; set; }
 
-        public bool IsActive { get; set; }
+        public UserStatus IsActive { get; set; }
 
         public DateTime CreatedDate { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DigitalWallet.Domain.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,7 +13,7 @@ namespace DigitalWallet.Application.DTOs.Users
 
         public string LastName { get; set; }
 
-        public string? Email { get; set; }
+        public Email Email { get; set; }
 
         public string? PhoneNumber { get; set; }
 
