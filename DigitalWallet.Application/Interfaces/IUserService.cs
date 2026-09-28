@@ -8,10 +8,20 @@ namespace DigitalWallet.Application.Interfaces
     {
         Task<UserResponseDTO> RegisterAsync(RegisterRequestDTO request); // Task<UserResponseDto> Metod asenkrondur (async/await). İşlem bittiğinde, yeni oluşturulan kullanıcının bilgilerini içeren bir yanıt nesnesi döndürür. RegisterAsync'e ise RegisterRequestDto request parametrelerini verir.
         
-        Task<UserResponseDTO> LoginAsync(LoginRequestDTO request, UserStatus IsActive);
+        Task<LoginResponseDTO> LoginAsync(LoginRequestDTO request, UserStatus IsActive);
 
-        Task<UserResponseDTO> UpdateKYC(UpdateKYCRequestDTO request);
+        Task<bool> LogOffAsync(Guid Id);
 
         Task<UserResponseDTO?> GetByIdAsync(Guid Id); 
+
+        Task<UserResponseDTO> GetMeAsync(Guid Id);
+
+        Task<UserResponseDTO> UpdateUserAsync(Guid Id, UpdateUserRequestDTO request);
+
+        // Task<UserResponseDTO> UpdateKYC(UpdateKYCRequestDTO request); Sonra eklenecek.
+
+        Task<bool> DeleteUserAsync(Guid Id);
+
+
     }
 }

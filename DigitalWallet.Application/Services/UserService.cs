@@ -2,8 +2,12 @@
 using DigitalWallet.Application.Interfaces;
 using DigitalWallet.Domain.Entities;
 using DigitalWallet.Domain.Enums;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 
 namespace DigitalWallet.Application.Services
@@ -24,7 +28,7 @@ namespace DigitalWallet.Application.Services
 
         public async Task<UserResponseDTO> RegisterAsync(RegisterRequestDTO request)
         {
-            //E-posta, kimlik kontrolü ve e mail format doğrulaması ValueObject içinde
+            //E-posta, kimlik kontrolü. Email format doğrulaması ValueObject içinde
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (existingUser != null)
             {
@@ -79,10 +83,10 @@ namespace DigitalWallet.Application.Services
                 KYC = user.KYC,
                 IsActive = user.IsActive,
                 CreatedDate = user.CreatedDate
-            }; // reponse DTO'lar altında propertyler eklenmeli
+            };
         }
 
-        public async Task<UserResponseDTO> LoginAsync(LoginRequestDTO request, UserStatus IsActive)
+        public async Task<LoginResponseDTO> LoginAsync(LoginRequestDTO request, UserStatus IsActive)
         {
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
@@ -100,16 +104,30 @@ namespace DigitalWallet.Application.Services
 
             string token = _jwtService.GenerateToken(user);
 
-            return new UserResponseDTO
+            return new LoginResponseDTO
             {
-                token = token,
+                Token = token,
                 Expiration = DateTime.UtcNow.AddHours(1),
-                FirstName = $"{user.FirstName}",
-                LastName = $"{user.LastName}",
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
 
-            };// UserResponseDTO altında token ve expire süresi dönmeli eklenecek
+                User = new UserResponseDTO
+                {
+                    FirstName = $"{user.FirstName}",
+                    LastName = $"{user.LastName}",
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber
+                }
+            };
+        }
+            
+
+        public async Task<bool> LogOffAsync(Guid Id) 
+        {
+            var user = await _context.Users.FindAsync(Id);
+            if (user == null)
+                throw new Exception("Kullanıcı bulunamadı.");
+
+            await _context.SaveChangesAsync(); // Login mi kontrolü controller içinde [Authorize] ile yapılacak
+            return true;
         }
 
         public async Task<UserResponseDTO?> GetByIdAsync(Guid Id)
@@ -134,13 +152,76 @@ namespace DigitalWallet.Application.Services
                 LastName = $"{user.LastName}",
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-            };// reponse DTO'lar altında propertyler eklenmeli
+            };
         }
 
+        public async Task<UserResponseDTO> GetMeAsync(Guid Id)
+        {
+            var user = await _context.Users.FindAsync(Id);
+            if (user == null) return null;
+
+            return new UserResponseDTO
+            {
+                FirstName = $"{user.FirstName}",
+                LastName = $"{user.LastName}",
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+            };
+
+        }
+
+        /*
         public Task<UserResponseDTO> UpdateKYC(UpdateKYCRequestDTO request)
         {
+            return new UserResponseDTO();  
+        }
+        */
 
-            return new UserResponseDTO();  // reponse DTO'lar altında propertyler eklenmeli
+        public async Task<UserResponseDTO> UpdateUserAsync(Guid Id, UpdateUserRequestDTO request)
+        {
+            var user = await _context.Users.FindAsync(Id);
+            if (user == null)
+            {
+                throw new Exception("Kullanıcı bulunamadı.");
+            }
+
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.PhoneNumber = request.PhoneNumber;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+
+            return new UserResponseDTO
+            {
+                FirstName = $"{user.FirstName}",
+                LastName = $"{user.LastName}",
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+            };
+        }
+
+        public async Task<bool> DeleteUserAsync(Guid Id)
+        {
+            var user = await _context.Users.FindAsync(Id);
+            if (user == null)
+            {
+                throw new Exception("Kullanıcı bulunamadı.");
+            }
+
+            var activeWallets = await _context.Wallets
+                    .Where(w => w.UserId == Id && w.WalletStatus == WalletStatus.Active)
+                    .ToListAsync();
+
+            if (activeWallets.Any(w => w.Balance > 0))
+                throw new Exception("İçinde bakiye bulunan bir cüzdan silinemez.");
+
+
+            _context.Users.Remove(user);
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

@@ -7,8 +7,6 @@ namespace DigitalWallet.Domain.Enums
     public enum WalletStatus
     {
         Active,
-        Passive,
-        Blocked,
-        PendingApproval
+        Passive
     }
 }
