@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using DigitalWallet.Domain.Entities;
 
 namespace DigitalWallet.Application.Services
 {
@@ -15,16 +16,16 @@ namespace DigitalWallet.Application.Services
             _config = config;
         }
 
-        public string GenerateToken(string userId, string email, string FirstName, string LastName)
+        public string GenerateToken(User user)
         {
             var claims = new[]
-            {
-            new Claim(ClaimTypes.NameIdentifier, userId),
-            new Claim(ClaimTypes.Email, email),
-            new Claim(ClaimTypes.GivenName, FirstName),
-            new Claim(ClaimTypes.Surname, LastName),
+          {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email.Value),
+            new Claim(ClaimTypes.GivenName, user.FirstName),
+            new Claim(ClaimTypes.Surname, user.LastName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+          };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -5,6 +5,7 @@ using DigitalWallet.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
+
 namespace DigitalWallet.Application.Services
 {
     public class UserService : IUserService
@@ -12,10 +13,13 @@ namespace DigitalWallet.Application.Services
         private readonly IApplicationDbContext _context;
         private readonly IConfiguration _configuration;
 
-        public UserService(IApplicationDbContext context, IConfiguration configuration)
+        private readonly JWTService _jwtService;
+
+        public UserService(IApplicationDbContext context, IConfiguration configuration, JWTService jwtService)
         {
             _context = context;
             _configuration = configuration;
+            _jwtService = jwtService;
         }
 
         public async Task<UserResponseDTO> RegisterAsync(RegisterRequestDTO request)
@@ -45,8 +49,9 @@ namespace DigitalWallet.Application.Services
                 PasswordHash = hashedPassword,
                 PhoneNumber = request.PhoneNumber = string.Empty,
                 KYC = KYCLevel.Standart,
-                CreatedDate = DateTime.UtcNow,
-                IsActive = UserStatus.Active
+                IsActive = UserStatus.Active,
+                CreatedDate = DateTime.UtcNow
+
             };
 
             _context.Users.Add(user);
@@ -65,7 +70,16 @@ namespace DigitalWallet.Application.Services
 
             await _context.SaveChangesAsync();
 
-            return new UserResponseDTO(); // reponse DTO'lar altında propertyler eklenmeli
+            return new UserResponseDTO
+            {
+                FirstName = $"{user.FirstName}",
+                LastName = $"{user.LastName}",
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                KYC = user.KYC,
+                IsActive = user.IsActive,
+                CreatedDate = user.CreatedDate
+            }; // reponse DTO'lar altında propertyler eklenmeli
         }
 
         public async Task<UserResponseDTO> LoginAsync(LoginRequestDTO request, UserStatus IsActive)
@@ -84,9 +98,18 @@ namespace DigitalWallet.Application.Services
                 throw new Exception("Hesabınız aktif değil.");
             }
 
-            string token = GenerateToken(user);
+            string token = _jwtService.GenerateToken(user);
 
-            return new UserResponseDTO(); // UserResponseDTO altında token ve expire süresi dönmeli eklenecek
+            return new UserResponseDTO
+            {
+                token = token,
+                Expiration = DateTime.UtcNow.AddHours(1),
+                FirstName = $"{user.FirstName}",
+                LastName = $"{user.LastName}",
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+
+            };// UserResponseDTO altında token ve expire süresi dönmeli eklenecek
         }
 
         public async Task<UserResponseDTO?> GetByIdAsync(Guid Id)
@@ -105,7 +128,13 @@ namespace DigitalWallet.Application.Services
                 throw new Exception($"{Id}'li kullanıcı bulunmuyor");
             }
 
-            return new UserResponseDTO();  // reponse DTO'lar altında propertyler eklenmeli
+            return new UserResponseDTO
+            {
+                FirstName = $"{user.FirstName}",
+                LastName = $"{user.LastName}",
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+            };// reponse DTO'lar altında propertyler eklenmeli
         }
 
         public Task<UserResponseDTO> UpdateKYC(UpdateKYCRequestDTO request)
