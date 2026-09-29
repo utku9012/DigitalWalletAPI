@@ -1,5 +1,6 @@
 ﻿using DigitalWallet.Application.Interfaces;
 using DigitalWallet.Domain.Entities;
+using DigitalWallet.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace DigitalWallet.Infrastructure
@@ -21,36 +22,41 @@ namespace DigitalWallet.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); // mapleme güncellenecek
+            base.OnModelCreating(modelBuilder);
 
             #region User
+
             modelBuilder.Entity<User>()
                 .ToTable("Users")
                 .HasKey(u => u.Id);
 
             modelBuilder.Entity<User>()
+                .Property(u => u.IdentityNumber)
+                .HasMaxLength(11);
+
+            modelBuilder.Entity<User>()
                 .Property(u => u.FirstName)
-                .HasMaxLength(50)
-                .IsRequired();
+                .HasMaxLength(30);
 
             modelBuilder.Entity<User>()
                 .Property(u => u.LastName)
-                .HasMaxLength(50)
-                .IsRequired();
+                .HasMaxLength(30);
 
             modelBuilder.Entity<User>()
-                .Property(u => u.IdentityNumber)
-                .HasMaxLength(11)
-                .IsRequired();
+                .Property(u => u.Email)
+                .HasConversion(
+                    e => e.Value,                   // DB'ye yazarken: Email -> string
+                    s => new Email(s)               // DB'den okurken: string -> Email
+                );
 
             modelBuilder.Entity<User>()
-                .Property(u => u.Email);
+                .Property(u => u.PhoneNumber);
 
             modelBuilder.Entity<User>()
                 .Property(u => u.Password);
 
             modelBuilder.Entity<User>()
-                .Property(u => u.PhoneNumber);
+                .Property(u => u.PasswordHash);
 
             modelBuilder.Entity<User>() // enum mapleme
                 .Property(u => u.KYC)
@@ -59,17 +65,37 @@ namespace DigitalWallet.Infrastructure
             modelBuilder.Entity<User>() 
                 .Property(u => u.IsActive)
                 .HasConversion<string>(); // olmazsa BoolToZeroOneConverter kullan
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.CreatedDate);
+
             #endregion
 
             #region Wallet
+
             modelBuilder.Entity<Wallet>()
                 .ToTable("Wallets")
                 .HasKey(u => u.Id);
 
             modelBuilder.Entity<Wallet>()
+                .Property(u => u.Name);
+
+            modelBuilder.Entity<Wallet>()
                 .HasOne(u => u.User)
                 .WithMany(b => b.Wallets)
                 .HasForeignKey(u => u.UserId);
+
+            modelBuilder.Entity<Wallet>()
+                .HasMany(w => w.Payments)
+                .WithOne(p => p.Wallet)
+                .HasForeignKey(p => p.WalletId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Wallet>()
+                .HasMany(w => w.Transactions)
+                .WithOne(p => p.Wallet)
+                .HasForeignKey(p => p.WalletId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Wallet>()
                 .Property(u => u.IBAN)
@@ -80,17 +106,16 @@ namespace DigitalWallet.Infrastructure
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<Wallet>()
-                .HasMany(w => w.Payments)
-                .WithOne(p => p.Wallet)
-                .HasForeignKey(p => p.WalletId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Wallet>()
                 .Property(u => u.Currency)
                 .HasConversion<string>();
 
             modelBuilder.Entity<Wallet>()
-                .Property(u => u.RowVersion);
+                .Property(u => u.CreatedDate);
+
+            modelBuilder.Entity<Wallet>()
+                .Property(u => u.WalletStatus)
+                .HasConversion<string>();
+
             #endregion
 
             #region Payment
@@ -136,11 +161,31 @@ namespace DigitalWallet.Infrastructure
                 .HasKey(t => t.Id);
 
             modelBuilder.Entity<Transaction>()
-                .Property(t => t.WalletId)
-                .IsRequired();
+                .HasOne(t => t.Wallet)
+                .WithMany(w => w.Transactions)
+                .HasForeignKey(t => t.WalletId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Transaction>()
-                .Property(t => t.PaymentId);
+                .HasOne(t => t.ReceiverWallet)
+                .WithMany() 
+                .HasForeignKey(t => t.ReceiverWalletId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.SenderWallet)
+                .WithMany() 
+                .HasForeignKey(t => t.SenderWalletId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Payment)
+                .WithMany(p => p.Transactions)
+                .HasForeignKey(t => t.PaymentId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.Amount)
@@ -148,16 +193,11 @@ namespace DigitalWallet.Infrastructure
 
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.Currency)
-                .HasConversion<string>()
-                .IsRequired();
+                .HasConversion<string>();
 
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.TransactionType)
-                .HasConversion<string>()
-                .IsRequired();
-
-            modelBuilder.Entity<Transaction>()
-                .Property(t => t.TransactionDate);
+                .HasConversion<string>();
 
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.CreatedDate);
@@ -166,7 +206,8 @@ namespace DigitalWallet.Infrastructure
                 .Property(u => u.ReferenceId);
 
             modelBuilder.Entity<Transaction>()
-                .Property(u => u.Description);
+                .Property(u => u.Description)
+                .HasMaxLength(100);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Payment)

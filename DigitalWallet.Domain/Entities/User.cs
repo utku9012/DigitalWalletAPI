@@ -7,7 +7,6 @@ namespace DigitalWallet.Domain.Entities
 {
     public class User : IEntity
     {
-        
         public Guid Id { get; set; }
 
         public string IdentityNumber { get; set; }
@@ -24,12 +23,14 @@ namespace DigitalWallet.Domain.Entities
 
         public string Password { get; set; }
 
+        public string PasswordHash { get; set; }
+
         public KYCLevel KYC { get; set; }
 
         public UserStatus IsActive { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
-        public string PasswordHash { get; set; }
+
     }
 }

@@ -5,7 +5,7 @@ using DigitalWallet.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+/*
 namespace DigitalWallet.Application.Services
 {
     public class TransactionService : ITransactionService
@@ -79,7 +79,7 @@ namespace DigitalWallet.Application.Services
         }
 
 
-        public Task<bool> TransferAsync(TransferRequestDTO request)
+        public async Task<bool> TransferAsync(TransferRequestDTO request)
         {
             if (request.Amount <= 0)
                 throw new InvalidOperationException("Transfer tutarı 0'dan büyük olmalıdır.");
@@ -141,3 +141,4 @@ namespace DigitalWallet.Application.Services
         }
     }
 }
+*/

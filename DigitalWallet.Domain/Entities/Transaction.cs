@@ -26,8 +26,6 @@ namespace DigitalWallet.Domain.Entities
 
         public TransactionType TransactionType { get; set; }
 
-        public DateTime TransactionDate { get; set; }
-
         public Guid ReferenceId { get; set; } // unique olmalı
 
         public string? Description { get; set; }

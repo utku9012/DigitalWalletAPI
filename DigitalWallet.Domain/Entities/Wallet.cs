@@ -24,8 +24,6 @@ namespace DigitalWallet.Domain.Entities
 
         public Currency Currency { get; set; }
 
-        public DateTime RowVersion { get; set; }
-
         public DateTime CreatedDate { get; set; }
 
         public WalletStatus WalletStatus { get; set; }

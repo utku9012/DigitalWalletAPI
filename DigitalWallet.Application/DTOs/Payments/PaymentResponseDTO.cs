@@ -12,4 +12,3 @@ namespace DigitalWallet.Application.DTOs.Payments
         public DateTime CreatedAt { get; set; }
     }
 }
-}

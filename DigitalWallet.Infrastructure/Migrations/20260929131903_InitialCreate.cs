@@ -15,16 +15,17 @@ namespace DigitalWallet.Infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IdentityNumber = table.Column<int>(type: "int", maxLength: 11, nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdentityNumber = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<int>(type: "int", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     KYC = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<string>(type: "nvarchar(1)", nullable: false)
+                    IsActive = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,13 +36,14 @@ namespace DigitalWallet.Infrastructure.Migrations
                 name: "Wallets",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IBAN = table.Column<string>(type: "nvarchar(26)", maxLength: 26, nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RowVersion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WalletStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,13 +60,12 @@ namespace DigitalWallet.Infrastructure.Migrations
                 name: "Payments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    WalletId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WalletId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReferenceId = table.Column<int>(type: "int", nullable: false),
+                    ReferenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -82,16 +83,16 @@ namespace DigitalWallet.Infrastructure.Migrations
                 name: "Transactions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    WalletId = table.Column<int>(type: "int", nullable: false),
-                    PaymentId = table.Column<int>(type: "int", nullable: true),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WalletId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SenderWalletId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ReceiverWalletId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PaymentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TransactionType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReferenceId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReferenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -104,11 +105,23 @@ namespace DigitalWallet.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_Transactions_Wallets_ReceiverWalletId",
+                        column: x => x.ReceiverWalletId,
+                        principalTable: "Wallets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Transactions_Wallets_SenderWalletId",
+                        column: x => x.SenderWalletId,
+                        principalTable: "Wallets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Transactions_Wallets_WalletId",
                         column: x => x.WalletId,
                         principalTable: "Wallets",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -120,6 +133,16 @@ namespace DigitalWallet.Infrastructure.Migrations
                 name: "IX_Transactions_PaymentId",
                 table: "Transactions",
                 column: "PaymentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_ReceiverWalletId",
+                table: "Transactions",
+                column: "ReceiverWalletId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_SenderWalletId",
+                table: "Transactions",
+                column: "SenderWalletId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_WalletId",
