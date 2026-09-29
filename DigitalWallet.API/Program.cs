@@ -7,9 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var jwtSettings = builder.Configuration.GetSection("Jwt");
-var jwtSecretKey = builder.Configuration["JwtSettings:Secret"]; 
-var keyBytes = Encoding.UTF8.GetBytes(jwtSecretKey);
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
 
 // Add services to the container.
@@ -20,12 +19,16 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     }); // JSON dönüştürücü, enumların outputta int yerine string formatında olması için
+builder.Services.AddEndpointsApiExplorer(); 
+builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 }
 );
+builder.Services.AddScoped<IApplicationDbContext>(
+    sp => sp.GetRequiredService<AppDbContext>());
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -54,15 +57,16 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();  
+    app.UseSwaggerUI(); 
 }
 
-app.UseRouting();
-
 app.UseHttpsRedirection();
+
+app.UseRouting();
 
 app.UseAuthentication();
 
