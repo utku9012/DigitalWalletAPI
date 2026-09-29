@@ -8,6 +8,8 @@ namespace DigitalWallet.Domain.Entities
     {
         public Guid Id { get; set; }
 
+        public string Name { get; set; } 
+
         public Guid UserId { get; set; } //foreign key
 
         public User User { get; set; }

@@ -60,12 +60,16 @@ namespace DigitalWallet.Application.Services
 
             _context.Users.Add(user);
 
+            var defaultCurrency = Currency.TRY;
+
             var defaultWallet = new Wallet
             {
                 Id = Guid.NewGuid(),
                 UserId = user.Id,
+                Name = $"{defaultCurrency} Cüzdanım",
                 Balance = 0,
                 Currency = Currency.TRY,
+                IBAN = "TR" + new Random().Next(10000000, 99999999).ToString(),
                 WalletStatus = WalletStatus.Active,
                 CreatedDate = DateTime.UtcNow
             };
@@ -157,7 +161,7 @@ namespace DigitalWallet.Application.Services
 
         public async Task<UserResponseDTO> GetMeAsync(Guid Id)
         {
-            var user = await _context.Users.FindAsync(Id);
+            var user = await _context.Users.FindAsync(Id); // login mi kontrolü controller da yapılacak
             if (user == null) return null;
 
             return new UserResponseDTO
@@ -186,6 +190,7 @@ namespace DigitalWallet.Application.Services
             }
 
             user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
             user.LastName = request.LastName;
             user.PhoneNumber = request.PhoneNumber;
 

@@ -8,10 +8,14 @@ namespace DigitalWallet.Application.Interfaces
 {
     public interface IWalletService
     {
-        Task<WalletResponseDTO> CreateWallet(CreateWalletDTO request);
+        Task<WalletResponseDTO> CreateWalletAsync(CreateWalletDTO request);
 
-        Task<WalletResponseDTO> GetWalletById(Guid Id);
+        Task<WalletResponseDTO> GetWalletById(Guid Id, string Name);
 
-        Task<IEnumerable<WalletResponseDTO>> GetUserWalletsAsync(Guid userId);
+        Task<IEnumerable<WalletResponseDTO>> GetAllWalletsAsync(Guid userId, string Name);
+
+        Task<WalletResponseDTO> ToggleStatusAsync(Guid walletId, string Name); 
+
+        Task<bool> DeleteAsync(Guid walletId, string Name);
     }
 }

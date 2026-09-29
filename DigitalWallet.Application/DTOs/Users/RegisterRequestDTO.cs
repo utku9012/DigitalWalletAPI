@@ -18,6 +18,5 @@ namespace DigitalWallet.Application.DTOs.Users
         public string? PhoneNumber { get; set; }
 
         public string Password { get; set; }
-
     }
 }

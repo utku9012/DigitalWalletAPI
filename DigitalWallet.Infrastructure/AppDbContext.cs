@@ -21,7 +21,7 @@ namespace DigitalWallet.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); // mapleme güncellenecek
 
             #region User
             modelBuilder.Entity<User>()
