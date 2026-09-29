@@ -12,6 +12,8 @@ namespace DigitalWallet.Application.Interfaces
 
         Task<WalletResponseDTO> GetWalletById(Guid Id, string Name);
 
+        // Task<WalletResponseDTO> CurrencyExchangeAsync(Guid Id, string Name); eklenecek
+
         Task<IEnumerable<WalletResponseDTO>> GetAllWalletsAsync(Guid userId, string Name);
 
         Task<WalletResponseDTO> ToggleStatusAsync(Guid walletId, string Name); 

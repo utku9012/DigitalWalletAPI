@@ -65,15 +65,7 @@ namespace DigitalWallet.Application.Services
             var wallet = await _context.Wallets
                 .FirstOrDefaultAsync(w => w.UserId == Id && w.Name.ToLower() == Name.ToLower());
 
-            if (wallet == null)
-            {
-                throw new Exception("");
-            }
-
-            var walletExists = await _context.Wallets
-                .FirstOrDefaultAsync(w => w.UserId == Id && w.Name.ToLower() == Name.ToLower());
-
-            if (walletExists == null) // DB'de var mı kontrolü
+            if (wallet == null) // DB'de var mı kontrolü
             {
                 throw new Exception($"{Id}'li cüzdan bulunmuyor");
             }

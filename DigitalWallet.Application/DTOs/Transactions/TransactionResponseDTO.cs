@@ -9,9 +9,9 @@ namespace DigitalWallet.Application.DTOs.Transactions
     {
         public Guid Id { get; set; }
 
-        public Guid? SenderWalletId { get; set; }
+        public string SenderWalletName { get; set; }
 
-        public Guid? ReceiverWalletId { get; set; }
+        public string ReceiverWalletName { get; set; }
 
         public decimal Amount { get; set; }
 

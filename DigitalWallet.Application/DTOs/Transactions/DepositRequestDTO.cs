@@ -7,7 +7,9 @@ namespace DigitalWallet.Application.DTOs.Transactions
 {
     public class DepositRequestDTO
     {
-        public Guid WalletId { get; set; } 
+        public Guid UserId { get; set; }
+
+        public string WalletName { get; set; } 
         
         public decimal Amount { get; set; } 
     }

@@ -3,9 +3,11 @@ namespace DigitalWallet.Application.DTOs.Transactions
 {
     public class TransferRequestDTO
     {
-        public Guid SenderWalletId { get; set; }
+        public Guid UserId { get; set; }
 
-        public Guid ReceiverWalletId { get; set; }
+        public string SenderWalletName { get; set; }
+
+        public string ReceiverWalletName { get; set; }
 
         public decimal Amount { get; set; }
 
