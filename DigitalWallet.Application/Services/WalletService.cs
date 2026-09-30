@@ -29,16 +29,23 @@ namespace DigitalWallet.Application.Services
             }
 
             var walletExists = await _context.Wallets.AnyAsync(w => w.Currency == request.Currency);
-            if (!walletExists)
+            if (walletExists)
             {
                 throw new InvalidOperationException($"Kullanıcının zaten aktif bir {request.Currency} cüzdanı bulunmaktadır.");
             }
 
+            var walletNameExists = await _context.Wallets
+            .AnyAsync(w => w.UserId == request.UserId && w.Name.ToLower() == request.Name.ToLower());
+            if (walletNameExists)
+            {
+                throw new InvalidOperationException($"'{request.Name}' adında bir cüzdanınız zaten var.");
+            }
+                
             var wallet = new Wallet
             {
                 Id = Guid.NewGuid(),
                 UserId = request.UserId,
-                Name = string.IsNullOrWhiteSpace(request.Name) ? $"{request.Currency} Cüzdanım" : request.Name,
+                Name = request.Name,
                 Balance = 0,
                 IBAN = "TR" + new Random().Next(10000000, 99999999).ToString(), 
                 Currency = request.Currency,
@@ -60,14 +67,14 @@ namespace DigitalWallet.Application.Services
             };
         }
 
-        public async Task<WalletResponseDTO> GetWalletById(Guid Id, string Name)
+        public async Task<WalletResponseDTO> GetWalletByName(Guid Id, string Name)
         {
             var wallet = await _context.Wallets
                 .FirstOrDefaultAsync(w => w.UserId == Id && w.Name.ToLower() == Name.ToLower());
 
             if (wallet == null) // DB'de var mı kontrolü
             {
-                throw new Exception($"{Id}'li cüzdan bulunmuyor");
+                throw new Exception($"{Name} isimli cüzdan bulunmuyor");
             }
 
             return new WalletResponseDTO
@@ -101,9 +108,10 @@ namespace DigitalWallet.Application.Services
 
         public async Task<WalletResponseDTO> ToggleStatusAsync(Guid Id, string Name )
         {
-            var wallet = await _context.Wallets.FindAsync(Id);
+            var wallet = await _context.Wallets
+                        .FirstOrDefaultAsync(w => w.UserId == Id && w.Name.ToLower() == Name.ToLower());
             if (wallet == null)
-                throw new Exception("Cüzdan bulunamadı.");
+            throw new Exception($"'{Name}' adında bir cüzdan bulunamadı.");
 
             if (wallet.WalletStatus == WalletStatus.Active)
             {
@@ -126,9 +134,10 @@ namespace DigitalWallet.Application.Services
 
         public async Task<bool> DeleteAsync(Guid Id, string Name)
         {
-            var wallet = await _context.Wallets.FindAsync(Id);
+            var wallet = await _context.Wallets
+                        .FirstOrDefaultAsync(w => w.UserId == Id && w.Name.ToLower() == Name.ToLower());
             if (wallet == null)
-                throw new Exception("Cüzdan bulunamadı.");
+                throw new Exception($"'{Name}' adında bir cüzdan bulunamadı.");
 
             if (wallet.Balance > 0)
                 throw new InvalidOperationException("Bakiye bulunan bir cüzdan silinemez. Lütfen önce bakiyenizi transfer edin veya çekin.");

@@ -22,22 +22,22 @@ namespace DigitalWallet.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMyWallets(Guid userId, string Name)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Requesti atan'ın JWT Tokenini inceler."NameIdentifier" ise Token içinde saklanan user ID'sini okur.
             if (string.IsNullOrEmpty(userIdClaim))
                 return Unauthorized();
 
             var wallets = await _walletService.GetAllWalletsAsync(Guid.Parse(userIdClaim), Name);
-            return Ok(wallets);
+            return Ok(wallets); 
         }
 
         [HttpGet("by-name")]
-        public async Task<IActionResult> GetByName([FromQuery] string name) // 
+        public async Task<IActionResult> GetByName([FromQuery] string name) // [FromQuery] Bu bilgiyi girilen URL'in sonundaki ? işaretinden sonraki kısımdan al. (? işaretinden sonraki (?name=TRY Cüzdanım) kısımlarına Query String denir.)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim))
                 return Unauthorized();
 
-            var wallet = await _walletService.GetWalletById(Guid.Parse(userIdClaim), name);
+            var wallet = await _walletService.GetWalletByName(Guid.Parse(userIdClaim), name);
             if (wallet == null)
                 return NotFound("Bu isimde bir cüzdan bulunamadı.");
 

@@ -51,7 +51,7 @@ namespace DigitalWallet.Application.Services
                 LastName = request.LastName,
                 Email = request.Email,
                 PasswordHash = hashedPassword,
-                PhoneNumber = request.PhoneNumber = string.Empty,
+                PhoneNumber = request.PhoneNumber ?? string.Empty,
                 KYC = KYCLevel.Standart,
                 IsActive = UserStatus.Active,
                 CreatedDate = DateTime.UtcNow

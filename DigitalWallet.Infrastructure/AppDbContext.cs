@@ -85,6 +85,10 @@ namespace DigitalWallet.Infrastructure
                 .WithMany(b => b.Wallets)
                 .HasForeignKey(u => u.UserId);
 
+            modelBuilder.Entity<Wallet>() // her kullanıcının aynı isimde yalnızca bir cüzdanı olabilir
+                .HasIndex(w => new { w.UserId, w.Name })
+                .IsUnique();
+
             modelBuilder.Entity<Wallet>()
                 .HasMany(w => w.Payments)
                 .WithOne(p => p.Wallet)

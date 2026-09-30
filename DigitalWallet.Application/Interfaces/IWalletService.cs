@@ -10,7 +10,7 @@ namespace DigitalWallet.Application.Interfaces
     {
         Task<WalletResponseDTO> CreateWalletAsync(CreateWalletDTO request);
 
-        Task<WalletResponseDTO> GetWalletById(Guid Id, string Name);
+        Task<WalletResponseDTO> GetWalletByName(Guid Id, string Name);
 
         // Task<WalletResponseDTO> CurrencyExchangeAsync(Guid Id, string Name); eklenecek
 

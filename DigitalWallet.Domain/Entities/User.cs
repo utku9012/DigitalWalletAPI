@@ -21,7 +21,7 @@ namespace DigitalWallet.Domain.Entities
 
         public string PhoneNumber { get; set; }
 
-        public string Password { get; set; }
+        public string? Password { get; set; } //Hashlenmiş password dbde tutulacak bu olmasa da olur.
 
         public string PasswordHash { get; set; }
 
