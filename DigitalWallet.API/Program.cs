@@ -13,6 +13,8 @@ var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
 
 // Add services to the container.
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IWalletService, WalletService>();
+// builder.Services.AddScoped<ITransactionService, TransactionService> transaction servisi yazılınca aktif edilecek
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
