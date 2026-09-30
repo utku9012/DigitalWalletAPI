@@ -20,18 +20,18 @@ namespace DigitalWallet.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMyWallets()
+        public async Task<IActionResult> GetMyWallets(Guid userId, string Name)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim))
                 return Unauthorized();
 
-            var wallets = await _walletService.GetAllWalletsAsync(Guid.Parse(userIdClaim));
+            var wallets = await _walletService.GetAllWalletsAsync(Guid.Parse(userIdClaim), Name);
             return Ok(wallets);
         }
 
         [HttpGet("by-name")]
-        public async Task<IActionResult> GetByName([FromQuery] string name)
+        public async Task<IActionResult> GetByName([FromQuery] string name) // 
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim))
