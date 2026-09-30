@@ -72,3 +72,4 @@ namespace DigitalWallet.API.Controllers
             return Ok(new { message = "Hesap başarıyla silindi." });
         }
     }
+}

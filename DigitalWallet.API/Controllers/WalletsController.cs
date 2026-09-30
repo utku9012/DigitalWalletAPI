@@ -1,4 +1,5 @@
-﻿using DigitalWallet.Application.Interfaces;
+﻿using DigitalWallet.Application.DTOs.Wallets;
+using DigitalWallet.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace DigitalWallet.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // Cüzdan işlemlerinin tümü login gerektirir
+    [Authorize] // tüm cüzdan işlemleri login gerektirdiği için [Authorize] tüm controllerı kapsar.
     public class WalletsController : ControllerBase
     {
         private readonly IWalletService _walletService;
@@ -18,7 +19,6 @@ namespace DigitalWallet.API.Controllers
             _walletService = walletService;
         }
 
-        // Kullanıcının kendi cüzdanlarını listelemesi
         [HttpGet]
         public async Task<IActionResult> GetMyWallets()
         {
@@ -26,11 +26,10 @@ namespace DigitalWallet.API.Controllers
             if (string.IsNullOrEmpty(userIdClaim))
                 return Unauthorized();
 
-            var wallets = await _walletService.GetAllByUserIdAsync(Guid.Parse(userIdClaim));
+            var wallets = await _walletService.GetAllWalletsAsync(Guid.Parse(userIdClaim));
             return Ok(wallets);
         }
 
-        // İsme göre cüzdan getirme (örn: /api/wallets/by-name?name=TRY Cüzdanım)
         [HttpGet("by-name")]
         public async Task<IActionResult> GetByName([FromQuery] string name)
         {
@@ -38,41 +37,38 @@ namespace DigitalWallet.API.Controllers
             if (string.IsNullOrEmpty(userIdClaim))
                 return Unauthorized();
 
-            var wallet = await _walletService.GetByNameAsync(Guid.Parse(userIdClaim), name);
+            var wallet = await _walletService.GetWalletById(Guid.Parse(userIdClaim), name);
             if (wallet == null)
                 return NotFound("Bu isimde bir cüzdan bulunamadı.");
 
             return Ok(wallet);
         }
 
-        // Yeni cüzdan açma (USD, EUR vb.)
         [HttpPost]
-        public async Task<IActionResult> CreateWallet([FromBody] CreateWalletRequestDTO request)
+        public async Task<IActionResult> CreateWallet([FromBody] CreateWalletDTO request)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim))
                 return Unauthorized();
 
-            // Güvenlik: DTO içindeki UserId'yi token'dan gelen gerçek UserId ile eziyoruz
+
             request.UserId = Guid.Parse(userIdClaim);
 
             var wallet = await _walletService.CreateWalletAsync(request);
             return Ok(wallet);
         }
 
-        // Cüzdanı Aktif/Pasif Yapma (PATCH)
         [HttpPatch("{walletId}/toggle-status")]
-        public async Task<IActionResult> ToggleStatus(Guid walletId)
+        public async Task<IActionResult> ToggleStatus(Guid walletId, string Name)
         {
-            var wallet = await _walletService.ToggleStatusAsync(walletId);
+            var wallet = await _walletService.ToggleStatusAsync(walletId, Name);
             return Ok(wallet);
         }
 
-        // Cüzdan Silme
         [HttpDelete("{walletId}")]
-        public async Task<IActionResult> DeleteWallet(Guid walletId)
+        public async Task<IActionResult> DeleteWallet(Guid walletId, string Name)
         {
-            await _walletService.DeleteAsync(walletId);
+            await _walletService.DeleteAsync(walletId, Name);
             return Ok(new { message = "Cüzdan başarıyla silindi." });
         }
     }
